@@ -1,6 +1,7 @@
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class ApplicationManager {
     public static void start() {
@@ -16,16 +17,20 @@ public class ApplicationManager {
 
         var graph = new Graph();
         graph.Initialize(vertexList);
-        List<Vertex> sortedVertexList = graph.topologicalSort();
+        List<Vertex> sortedVertexList = new ArrayList<>();
 
-        if (graph.isCycleFlag()) {
+        if (!graph.topologicalSort(sortedVertexList)) {
             System.out.println("Error, file requires have cycle!\n");
-            return;
-        }
+            for (var i = graph.getCycleEnd(); !Objects.equals(i, graph.getCycleStart()); i = graph.getParentName(i)) {
+                System.out.println(i);
+            }
+            System.out.println(graph.getCycleStart());
+        } else {
+            String answer = FileConcatenator.concatenateFiles(sortedVertexList);
+            if (!answer.equals("")) {
+                AnswerWriter.consoleWriteAnswer(answer);
 
-        String answer = FileConcatenator.concatenateFiles(sortedVertexList);
-        if (!answer.equals("")) {
-            AnswerWriter.consoleWriteAnswer(answer);
+            }
         }
     }
 }

@@ -3,13 +3,27 @@ import java.util.*;
 public class Graph {
     private final Map<String, Vertex> getVertexByName;
     private boolean cycleFlag;
+    private String cycleStart;
+    private String cycleEnd;
     private List<Vertex> vertexList;
-    private List<Vertex> sortingList;
     private Map<String, Integer> visitedVertex;
+    private Map<String, String> parents;
 
     public Graph() {
         getVertexByName = new HashMap<>();
         vertexList = new ArrayList<>();
+    }
+
+    public String getCycleStart() {
+        return cycleStart;
+    }
+
+    public String getCycleEnd() {
+        return cycleEnd;
+    }
+
+    public String getParentName(String vertexName) {
+        return parents.get(vertexName);
     }
 
     public boolean isCycleFlag() {
@@ -23,23 +37,25 @@ public class Graph {
         }
     }
 
-
-    public List<Vertex> topologicalSort() {
+    public boolean topologicalSort(List<Vertex> sortingList) {
         visitedVertex = new HashMap<>();
-        sortingList = new ArrayList<>();
+        parents = new HashMap<>();
         for (var vertex : vertexList) {
             visitedVertex.put(vertex.getName(), 0);
         }
         for (var vertex : vertexList) {
             if (visitedVertex.get(vertex.getName()) == 0) {
-                dfs(vertex.getName());
+                dfs(vertex.getName(), sortingList);
+            }
+            if (isCycleFlag()) {
+                break;
             }
         }
         Collections.reverse(sortingList);
-        return sortingList;
+        return !isCycleFlag();
     }
 
-    private void dfs(String vertexName) {
+    private void dfs(String vertexName, List<Vertex> result) {
         visitedVertex.replace(vertexName, 1);
         for (var requiredVertexName : getVertexByName.get(vertexName).getEdges()) {
             if (!getVertexByName.containsKey(requiredVertexName)) {
@@ -47,12 +63,15 @@ public class Graph {
                 continue;
             }
             if (visitedVertex.get(requiredVertexName) == 0) {
-                dfs(requiredVertexName);
+                parents.put(requiredVertexName, vertexName);
+                dfs(requiredVertexName, result);
             } else if (visitedVertex.get(requiredVertexName) == 1) {
                 cycleFlag = true;
+                cycleEnd = vertexName;
+                cycleStart = requiredVertexName;
             }
         }
         visitedVertex.replace(vertexName, 2);
-        sortingList.add(getVertexByName.get(vertexName));
+        result.add(getVertexByName.get(vertexName));
     }
 }
