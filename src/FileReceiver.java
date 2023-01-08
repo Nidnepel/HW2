@@ -3,22 +3,38 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Class for get all files in a directory.
+ */
 public class FileReceiver {
+    /**
+     * List of all files in directory
+     */
     final private List<File> files;
 
-    FileReceiver(File dir) {
+    /**
+     * Constructor
+     *
+     * @param directory - processed directory
+     */
+    FileReceiver(File directory) {
         files = new ArrayList<>();
-        receiveFiles(dir);
+        receiveFiles(directory);
     }
 
+    /**
+     * recursive search for files
+     *
+     * @param dir - processed directory
+     */
     private void receiveFiles(File dir) {
         try {
-            for (var i : Objects.requireNonNull(dir.listFiles())) {
-                if (i.isFile()) {
-                    files.add(i);
+            for (var element : Objects.requireNonNull(dir.listFiles())) {
+                if (element.isFile()) {
+                    files.add(element);
                 }
-                if (i.isDirectory()) {
-                    receiveFiles(i);
+                if (element.isDirectory()) {
+                    receiveFiles(element);
                 }
             }
         } catch (SecurityException ex) {
@@ -28,6 +44,11 @@ public class FileReceiver {
         }
     }
 
+    /**
+     * Getter
+     *
+     * @return list of files
+     */
     public List<File> getFiles() {
         return files;
     }
