@@ -1,7 +1,14 @@
 import java.io.File;
 import java.io.FileReader;
 
+/**
+ * A class for reading text files.
+ */
 public class TextReader {
+    /**
+     * @param file - txt file
+     * @return text from file
+     */
     public String getTextFromFile(File file) {
         StringBuilder text = new StringBuilder();
         try (var reader = new FileReader(file)) {
