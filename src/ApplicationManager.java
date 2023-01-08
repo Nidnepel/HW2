@@ -3,10 +3,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Program component manipulation class.
+ */
 public class ApplicationManager {
     public static void start() {
         File rootDirectory = ConsoleReader.readRootDirectory();
-
         var fileReceiver = new FileReceiver(rootDirectory);
 
         List<Vertex> vertexList = new ArrayList<>();
@@ -16,10 +18,11 @@ public class ApplicationManager {
         }
 
         var graph = new Graph();
-        graph.Initialize(vertexList);
+        graph.initialize(vertexList);
         List<Vertex> sortedVertexList = new ArrayList<>();
 
         if (!graph.topologicalSort(sortedVertexList)) {
+            // If graph have cycle.
             System.out.println("Error, file requires have cycle!\n");
             for (var i = graph.getCycleEnd(); !Objects.equals(i, graph.getCycleStart()); i = graph.getParentName(i)) {
                 System.out.println(i);
@@ -29,7 +32,6 @@ public class ApplicationManager {
             String answer = FileConcatenator.concatenateFiles(sortedVertexList);
             if (!answer.equals("")) {
                 AnswerWriter.consoleWriteAnswer(answer);
-
             }
         }
     }
